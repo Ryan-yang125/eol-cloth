@@ -1,4 +1,4 @@
-#include "Collisions.h"
+#include "Collisions.hpp"
 #include <Eigen/Dense>
 #define _USE_MATH_DEFINES
 #include <cmath>
@@ -340,7 +340,7 @@ int intersection(
 	Vector3d xd = xa + 2.0*(xc - xa);
 	Vector3d xe = xb + 2.0*(xc - xb);
 
-	// Slow: check all four triangles
+	// TODO Slow: check all four triangles
 	intersect = intersect_triangle3_inc(x0.data(), dx.data(), xa.data(), xb.data(), xc.data(), &t, &unused1, &unused2);
 	if (intersect) {
 		return 1;
@@ -897,8 +897,10 @@ void Find_Collision(const Mesh& mesh, const Obstacle* obs, std::vector<Collision
 		f2.col(i) = Vector3i(mesh.faces[i]->v[0]->node->index, mesh.faces[i]->v[1]->node->index, mesh.faces[i]->v[2]->node->index);
 	}
 
+	// compute point_cloud collision
 	ForPoint(colls, obs->collision_threshold, obs->point_cloud->points_position, obs->point_cloud->points_normal, v2, f2, true);
 
+	// compute box collision
 	int c = colls.size();
 	for (int b = 0; b < obs->box_num; b++)
 	{
@@ -910,7 +912,7 @@ void Find_Collision(const Mesh& mesh, const Obstacle* obs, std::vector<Collision
 		colls.insert(colls.end(), colls_list.begin(), colls_list.end());
 		
 
-		for (c; c < colls.size(); c++) {
+		for (; c < colls.size(); c++) {
 			if (colls[c]->count1 == 1 && colls[c]->count2 == 3) {
 				colls[c]->verts1(0) = obs->point_cloud->point_num + (b* obs->boxes[b]->point_num) + (b* obs->boxes[b]->edge_num) + colls[c]->verts1(0);
 			}

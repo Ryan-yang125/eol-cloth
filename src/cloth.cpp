@@ -1,10 +1,10 @@
-#include "cloth.h"
+#include "cloth.hpp"
 
-#include "obstacle.h"
-#include "constraint.h"
-#include "force.h"
-#include "utility.h"
-#include "preprocessor.h"
+#include "obstacle.hpp"
+#include "constraint.hpp"
+#include "force.hpp"
+#include "utility.hpp"
+#include "preprocessor.hpp"
 
 #include "external/ArcSim/mesh.hpp"
 #include "external/ArcSim/io.hpp"
@@ -313,8 +313,8 @@ void Cloth::solve(double h)
 	}
 
 	force->K = M.sparseView();
-	bool success = mosekSolve(force->K, b, constraint->Aeq, constraint->beq, constraint->Aineq, constraint->bineq, v);
     // TODO error detect
+	bool success = mosekSolve(force->K, b, constraint->Aeq, constraint->beq, constraint->Aineq, constraint->bineq, v);
 }
 
 void Cloth::step(Obstacle* obstacle, const Vector3d& gravity, double h, double t)

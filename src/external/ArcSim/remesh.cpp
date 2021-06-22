@@ -26,7 +26,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include "remesh.hpp"
 
-#include "../../cloth.h"
+#include "../../cloth.hpp"
 
 #include "blockvectors.hpp"
 #include "geometry.hpp"

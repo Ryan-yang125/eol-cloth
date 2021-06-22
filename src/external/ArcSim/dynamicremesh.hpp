@@ -29,8 +29,8 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 #include <map>
 #include "remesh.hpp"
-#include "../../cloth.h"
-#include "../../utility.h"
+#include "../../cloth.hpp"
+#include "../../utility.hpp"
 //#include "nearobs.hpp"
 
 class MeshSubset;

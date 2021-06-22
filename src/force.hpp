@@ -5,8 +5,8 @@
 #include <memory>
 #include <string>
 
-#include "utility.h"
-#include "cloth.h"
+#include "utility.hpp"
+#include "cloth.hpp"
 
 #include "external/ArcSim/mesh.hpp"
 

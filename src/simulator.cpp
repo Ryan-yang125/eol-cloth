@@ -1,10 +1,10 @@
-#include "simulator.h"
-#include "cloth.h"
-#include "obstacle.h"
-#include "preprocessor.h"
-#include "Collisions.h"
-#include "constraint.h"
-#include "force.h"
+#include "simulator.hpp"
+#include "cloth.hpp"
+#include "obstacle.hpp"
+#include "preprocessor.hpp"
+#include "Collisions.hpp"
+#include "constraint.hpp"
+#include "force.hpp"
 #include "external/ArcSim/dynamicremesh.hpp"
 
 using namespace Eigen;

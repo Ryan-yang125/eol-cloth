@@ -1,4 +1,4 @@
-#include "obstacle.h"
+#include "obstacle.hpp"
 
 using namespace std;
 using namespace Eigen;

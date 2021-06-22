@@ -13,8 +13,8 @@
 #include <Eigen/Dense>
 #include <iostream>
 
-#include "simulator.h"
-#include "cloth.h"
+#include "simulator.hpp"
+#include "cloth.hpp"
 
 
 using namespace std;
@@ -43,22 +43,22 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 	glViewport(0, 0, width, height);
 }
 
-void mouse_callback(GLFWwindow* window, double xpos, double ypos)
+void mouse_callback(GLFWwindow* window, double xPos, double yPos)
 {
 	if (firstMouse)
 	{
-		lastX = xpos;
-		lastY = ypos;
+		lastX = xPos;
+		lastY = yPos;
 		firstMouse = false;
 	}
 
-	float xoffset = xpos - lastX;
-	float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
+	float xOffset = xPos - lastX;
+	float yOffset = lastY - yPos; // reversed since y-coordinates go from bottom to top
 
-	lastX = xpos;
-	lastY = ypos;
+	lastX = xPos;
+	lastY = yPos;
 
-	camera.rotate(xoffset, yoffset);
+	camera.rotate(xOffset, yOffset);
 }
 
 // glfw: whenever the mouse scroll wheel scrolls, this callback is called

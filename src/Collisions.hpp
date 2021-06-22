@@ -2,7 +2,7 @@
 #define __Collisions__
 
 #include "external/ArcSim/mesh.hpp"
-#include "obstacle.h"
+#include "obstacle.hpp"
 #include <memory>
 #include <vector>
 #include <Eigen/Dense>
@@ -63,7 +63,6 @@ public:
 		this->nor2 = nor2;
 		this->pos1 = pos1;
 		this->pos2 = pos2;
-		this->pos1_ = pos1_;
 		this->count1 = count1;
 		this->count2 = count2;
 		this->verts1 = verts1;

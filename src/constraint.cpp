@@ -1,8 +1,8 @@
-#include "constraint.h"
+#include "constraint.hpp"
 
-#include "obstacle.h"
-#include "utility.h"
-#include "Collisions.h"
+#include "obstacle.hpp"
+#include "utility.hpp"
+#include "Collisions.hpp"
 
 #include "external/ArcSim/util.hpp"
 #include "external/ArcSim/geometry.hpp"

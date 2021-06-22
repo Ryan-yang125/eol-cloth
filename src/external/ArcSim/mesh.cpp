@@ -25,7 +25,7 @@ UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 */
 
 #include "mesh.hpp"
-#include "../../cloth.h"
+#include "../../cloth.hpp"
 #include "geometry.hpp"
 #include "util.hpp"
 #include <assert.h>

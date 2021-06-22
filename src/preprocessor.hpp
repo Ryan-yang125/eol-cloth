@@ -5,7 +5,7 @@
 #include <Eigen/Sparse>
 #include <Eigen/Dense>
 
-#include "Collisions.h"
+#include "Collisions.hpp"
 
 
 

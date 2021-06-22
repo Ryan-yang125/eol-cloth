@@ -1,4 +1,4 @@
-#include "preprocessor.h"
+#include "preprocessor.hpp"
 
 #include <stdlib.h>
 
@@ -7,7 +7,7 @@
 #include "external/ArcSim/subset.hpp"
 #include "external/ArcSim/dynamicremesh.hpp"
 
-#include "utility.h"
+#include "utility.hpp"
 
 using namespace std;
 using namespace Eigen;

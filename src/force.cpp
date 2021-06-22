@@ -1,4 +1,4 @@
-#include "force.h"
+#include "force.hpp"
 
 void Force::computeForce(const Mesh& mesh, const Material& mat, const Eigen::Vector3d& gravity, double h)
 {
