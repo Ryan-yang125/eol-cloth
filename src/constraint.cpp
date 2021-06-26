@@ -26,20 +26,20 @@ void Constraint::updateConstraint(const Obstacle* obstacle)
 
 	constraint_matrix.resize(9, total_size);
 
-	for (int p = 0; p < obstacle->point_cloud->point_num; p++) 
+	for (int p = 0; p < obstacle->point_cloud->point_num; p++)
 	{
 		constraint_matrix.block(0, p, 3, 1) = obstacle->point_cloud->points_normal.col(p);
 	}
 
-	for (int b = 0; b < obstacle->boxes.size(); b++) 
+	for (int b = 0; b < obstacle->boxes.size(); b++)
 	{
-		for (int p = 0; p < obstacle->boxes[b]->point_num; p++) 
+		for (int p = 0; p < obstacle->boxes[b]->point_num; p++)
 		{
 			int index = obstacle->point_cloud->point_num + (b* obstacle->boxes[b]->point_num) + (b* obstacle->boxes[b]->edge_num) + p;
 			Vector3d corner_nor = Vector3d::Zero();
-			for (int i = 0; i < 3; i++) 
+			for (int i = 0; i < 3; i++)
 			{
-				for (int j = 0; j < 2; j++) 
+				for (int j = 0; j < 2; j++)
 				{
 					corner_nor += obstacle->boxes[b]->face_norm.col(obstacle->boxes[b]->edge_face(j, obstacle->boxes[b]->vert_edge(i, p)));
 				}
@@ -48,7 +48,7 @@ void Constraint::updateConstraint(const Obstacle* obstacle)
 			constraint_matrix.block(0, index, 3, 1) = corner_nor.normalized();
 
 		}
-		for (int e = 0; e < obstacle->boxes[b]->edge_num; e++) 
+		for (int e = 0; e < obstacle->boxes[b]->edge_num; e++)
 		{
 			int index = obstacle->point_cloud->point_num + (b* obstacle->boxes[b]->point_num) + (b* obstacle->boxes[b]->edge_num) + (obstacle->boxes[b]->point_num + e);
 			constraint_matrix.block(0, index, 3, 1) = obstacle->boxes[b]->face_norm.col(obstacle->boxes[b]->edge_face(0, e));

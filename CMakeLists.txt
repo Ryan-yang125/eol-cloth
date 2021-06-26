@@ -21,13 +21,16 @@ file(GLOB HEADERS CONFIGURE_DEPENDS "src/*.hpp" "src/*.h")
 file(GLOB RENDERC CONFIGURE_DEPENDS "src/render/*.c" "src/render/*.cpp")
 file(GLOB RENDERH CONFIGURE_DEPENDS "src/render/*.h" "src/render/*.hpp")
 
+file(GLOB SHAPEC CONFIGURE_DEPENDS "src/shapes/*.c" "src/shapes/*.cpp")
+file(GLOB SHAPEH CONFIGURE_DEPENDS "src/shapes/*.h" "src/shapes/*.hpp")
+
 file(GLOB ARCSIMC "src/external/ArcSim/*.cpp" "src/external/ArcSim/*.c")
 file(GLOB ARCSIMH "src/external/ArcSim/*.hpp" "src/external/ArcSim/*.h")
 
 file(GLOB MOSEKC "src/external/Mosek/*.cpp" "src/external/Mosek/*.c")
 file(GLOB MOSEKH "src/external/Mosek/*.hpp" "src/external/Mosek/*.h")
 
-add_executable(${CMAKE_PROJECT_NAME} ${SOURCES} ${HEADERS} ${ARCSIMC} ${ARCSIMH} ${RENDERC} ${RENDERH} ${MOSEKC} ${MOSEKH})
+add_executable(${CMAKE_PROJECT_NAME} ${SOURCES} ${HEADERS} ${ARCSIMC} ${ARCSIMH} ${RENDERC} ${RENDERH} ${SHAPEC} ${SHAPEH} ${MOSEKC} ${MOSEKH})
 
 include_directories(${GLEW_H} ${GLFW_H} ${GLM_H} ${EIGEN_H} ${MOSEK_H})
 

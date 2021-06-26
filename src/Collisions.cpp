@@ -895,11 +895,11 @@ void Find_Collision(const Mesh& mesh, const Obstacle* obs, std::vector<Collision
 	for (int i = 0; i < mesh.faces.size(); i++)
 	{
 		f2.col(i) = Vector3i(mesh.faces[i]->v[0]->node->index, mesh.faces[i]->v[1]->node->index, mesh.faces[i]->v[2]->node->index);
+
 	}
 
 	// compute point_cloud collision
 	ForPoint(colls, obs->collision_threshold, obs->point_cloud->points_position, obs->point_cloud->points_normal, v2, f2, true);
-
 	// compute box collision
 	int c = colls.size();
 	for (int b = 0; b < obs->box_num; b++)
