@@ -188,7 +188,7 @@ void Cloth::velocityTransfer()
 		// If the node existed before do one of two things
 		if (found) 
 		{
-			// THIS is the key point bro!
+			// TODO THIS is the key point bro!
 			if (node->EoL_state == Node::WasEOL)
 			{
 				node->EoL_state = Node::IsLAG;
@@ -384,7 +384,6 @@ void Cloth::createClothBuffer()
 	delete mesh_buffer;
 	buffer = (float*)malloc(sizeof(float)*mesh.faces.size() * 3 * 6);
 	mesh_buffer = (float*)malloc(sizeof(float)*mesh.faces.size() * 6 * 3);
-	
 
 	for (int i = 0; i < mesh.faces.size(); i++)
 	{

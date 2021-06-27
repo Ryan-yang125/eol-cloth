@@ -83,7 +83,8 @@ void Box::createBoxBuffer()
 
                          x1, y2, z1, 0, 1, 0,
                          x2, y2, z1, 0, 1, 0,
-                         x2, y2, z2, 0, 1, 0};
+                         x2, y2, z2, 0, 1, 0
+    };
     buffer = (float*)malloc(sizeof(vertices));
     memcpy(buffer, vertices, sizeof(vertices));
     buffer_size = sizeof(float) * 6 * 6 * 6;

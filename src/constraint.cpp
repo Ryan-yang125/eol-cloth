@@ -277,11 +277,11 @@ void Constraint::applyConstraint(const Mesh&mesh, const Obstacle* obstacle, doub
 	}
 
 	if (ineqsize > 0) occur_collision = true;
-	
-	/*
-	if (t < 0.345) //Interactive section lol
+
+    // TODO Interactive section lol
+	if (t < 0.345)
 	{
-		
+
 		_Aeq.push_back(T(eqsize, 2 * 3, 1.0));
 		_beq.push_back(make_pair(eqsize, mesh.nodes[2]->v[0]));
 		eqsize++;
@@ -305,7 +305,7 @@ void Constraint::applyConstraint(const Mesh&mesh, const Obstacle* obstacle, doub
 		_Aeq.push_back(T(eqsize, 8 * 3 + 2, 1.0));
 		_beq.push_back(make_pair(eqsize, mesh.nodes[8]->v[2]));
 		eqsize++;
-		
+
 	}
 	else
 	{
@@ -320,8 +320,8 @@ void Constraint::applyConstraint(const Mesh&mesh, const Obstacle* obstacle, doub
 		_Aeq.push_back(T(eqsize, 2 * 3 + 2, 1.0));
 		_beq.push_back(make_pair(eqsize, mesh.nodes[2]->v[2]));
 		eqsize++;
-		
-		
+
+
 		_Aeq.push_back(T(eqsize, 8 * 3, 1.0));
 		_beq.push_back(make_pair(eqsize, mesh.nodes[8]->v[0]+0.2));
 		eqsize++;
@@ -333,7 +333,7 @@ void Constraint::applyConstraint(const Mesh&mesh, const Obstacle* obstacle, doub
 		_Aeq.push_back(T(eqsize, 8 * 3 + 2, 1.0));
 		_beq.push_back(make_pair(eqsize, mesh.nodes[8]->v[2]));
 		eqsize++;
-	}*/
+	}
 	
 	// up node 2  z:0.1
 	// forward both 2 & 8 fix -> both 2 & 8 x:0.2

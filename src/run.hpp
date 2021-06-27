@@ -1,6 +1,8 @@
 #ifndef RUN_HPP
 #define RUN_HPP
 
+#include <vector>
+
 #include "render/camera.h"
 #include "render/shader.h"
 
@@ -144,22 +146,30 @@ void run()
 	glEnable(GL_MULTISAMPLE);
 
 	// init shader
-	Shader worldShader("/Users/apple/CLionProjects/eol-cloth/src/shader/world.vs", "/Users/apple/CLionProjects/eol-cloth/src/shader/world.fs");
+    Shader worldShader("/Users/apple/CLionProjects/eol-cloth/src/shader/world.vs", "/Users/apple/CLionProjects/eol-cloth/src/shader/world.fs");
+//    Shader worldShader("/Users/apple/CLionProjects/eol-cloth/src/shader/phong.vs", "/Users/apple/CLionProjects/eol-cloth/src/shader/phong.fs");
 	Shader meshShader("/Users/apple/CLionProjects/eol-cloth/src/shader/mesh.vs", "/Users/apple/CLionProjects/eol-cloth/src/shader/mesh.fs");
 
 	// init cube
-    GLuint cubeVAO, cubeVBO;
-    setVertex(&cubeVAO, &cubeVBO, simulator->obstacle->boxes[0]->buffer_size,simulator->obstacle->boxes[0]->buffer, true);
-
-    GLuint cube1VAO, cube1VBO;
-    setVertex(&cube1VAO, &cube1VBO, simulator->obstacle->boxes[1]->buffer_size,simulator->obstacle->boxes[1]->buffer, true);
+    vector<GLuint> cubeVao(10);
+    vector<GLuint> cubeVbo(10);
+    for (int i = 0; i < simulator->obstacle->box_num; i++) {
+        setVertex(&cubeVao[i], &cubeVbo[i], simulator->obstacle->boxes[i]->buffer_size,simulator->obstacle->boxes[i]->buffer, true);
+    }
+//    GLuint cubeVAO, cubeVBO;
+//    setVertex(&cubeVAO, &cubeVBO, simulator->obstacle->boxes[0]->buffer_size,simulator->obstacle->boxes[0]->buffer, true);
+//
+//    GLuint cube1VAO, cube1VBO;
+//    setVertex(&cube1VAO, &cube1VBO, simulator->obstacle->boxes[1]->buffer_size,simulator->obstacle->boxes[1]->buffer, true);
 
     // niddle
-	float niddle[] = {0.751,0.751,-0.005, 0.751,0.751,-1.005,
-					  0.71,0.22,-0.005, 0.71,0.22,-1.005,
-					  0.27,0.51,-0.005, 0.27,0.51,-1.005};
+	float niddle[] = {0.751,0.751,-0.005, 0.751,1.751,-0.005,
+//					  0.71,0.22,-0.005, 0.71,0.22,-1.005,
+//					  0.27,0.51,-0.005, 0.27,0.51,-1.005,
+//                      0.17,0.31,-0.005, 0.17,0.31,-1.005
+					  };
 	GLuint pointVAO, pointVBO;
-    setVertex2D(&pointVAO, &pointVBO, sizeof(float) * 18, niddle, true);
+    setVertex2D(&pointVAO, &pointVBO, sizeof(float) * 6, niddle, true);
 
 
     // cloth
@@ -176,7 +186,7 @@ void run()
 		float currentTime = glfwGetTime();
 		deltaTime = currentTime - lastTime;
 		lastTime = currentTime;
-
+        std::cout << deltaTime << std::endl;
 		keyboard_callback(window);
 
 		if (animation_play) simulator->step();
@@ -203,7 +213,7 @@ void run()
 		glm::mat4 view = camera.getViewMatrix();
 		glm::mat4 model = glm::mat4(1.0f);
 
-		// Set light
+		// Set light and camera
 		worldShader.use();
 		worldShader.setVec3("light.position", glm::vec3(1.2, 1.2, 1.8));
 		worldShader.setVec3("viewPos", camera.Position);
@@ -215,36 +225,30 @@ void run()
 		worldShader.setVec3("light.diffuse", diffuseColor);
 		worldShader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
 
-		// Draw Cube
-//		worldShader.setVec3("material.ambient", 1.0f, 0.6f, 0.4f);
-		worldShader.setVec3("material.ambient", 0.0f, 0.0f, 0.5f);
-		worldShader.setVec3("material.diffuse", 0.9f, 0.5f, 0.3f);
-		worldShader.setVec3("material.specular", 0.1f, 0.1f, 0.1f);
-        worldShader.setFloat("material.shininess", 2.0f);
+        worldShader.setMat4("projection", projection);
+        worldShader.setMat4("view", view);
+        worldShader.setMat4("model", model);
 
-		worldShader.setMat4("projection", projection);
-		worldShader.setMat4("view", view);
-		worldShader.setMat4("model", model);
+        for (int i = 0; i < simulator->obstacle->box_num; ++i) {
+            // Draw Cube
+            worldShader.setVec3("material.ambient", 0.5f, 0.0f, 0.1f);
+            worldShader.setVec3("material.diffuse", 0.9f, 0.5f, 0.3f);
+            worldShader.setVec3("material.specular", 0.1f, 0.1f, 0.1f);
+            worldShader.setFloat("material.shininess", 1.0f);
+            glBindVertexArray(cubeVao[i]);
+            glDrawArrays(GL_TRIANGLES, 0, 36);
+        }
 
-		glBindVertexArray(cubeVAO);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
-		//glBindVertexArray(pointVAO);
-		//glDrawArrays(GL_LINES, 0, 6);
+		// draw point cloud
+//		glBindVertexArray(pointVAO);
+//		glDrawArrays(GL_LINES, 0, 2);
 
-        //Draw the Cube1
-        worldShader.setVec3("material.ambient", 0.0f, 0.0f, 0.5f);
-        worldShader.setVec3("material.diffuse", 0.9f, 0.5f, 0.3f);
-        worldShader.setVec3("material.specular", 0.1f, 0.1f, 0.1f);
-        worldShader.setFloat("material.shininess", 2.0f);
 
-        glBindVertexArray(cube1VAO);
-        glDrawArrays(GL_TRIANGLES, 0, 36);
-
-		//Draw the Cloth
-		worldShader.setVec3("material.ambient", 0.0f, 0.5f, 0.0f);
+		// Draw the Cloth
+		worldShader.setVec3("material.ambient", 0.5f, 0.5f, 0.5f);
 		worldShader.setVec3("material.diffuse", 0.5f, 0.0f, 0.0f);
 		worldShader.setVec3("material.specular", 0.1f, 0.1f, 0.1f);
-		worldShader.setFloat("material.shininess", 2.0f);
+		worldShader.setFloat("material.shininess", 1.0f);
 		glBindVertexArray(clothVAO);
 		glDrawArrays(GL_TRIANGLES, 0, 3 * simulator->cloth->mesh.faces.size());
 
