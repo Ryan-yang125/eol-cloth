@@ -24,8 +24,13 @@ uniform Light light;
 
 void main()
 {
+	// vec3 norm = Normal;
+    // if (!gl_FrontFacing) {
+    //     norm = -norm;
+    // }
 	vec3 ambient=light.ambient*material.ambient;
 
+	// norm = normalize(norm)
 	vec3 norm=normalize(Normal);
 	vec3 lightDir=normalize(light.position-FragPos);
 	float diff = max(dot(norm, lightDir),0.0);

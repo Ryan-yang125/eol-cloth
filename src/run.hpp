@@ -18,12 +18,11 @@
 #include "simulator.hpp"
 #include "cloth.hpp"
 
-
 using namespace std;
 using namespace Eigen;
 
-Simulator* simulator;
-Camera camera(glm::vec3(-2.03286 ,-2.05865 ,1.60675), glm::vec3(0,0,1), 53.04, -27.92);
+Simulator *simulator;
+Camera camera(glm::vec3(-2.03286, -2.05865, 1.60675), glm::vec3(0, 0, 1), 53.04, -27.92);
 
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 800;
@@ -38,14 +37,14 @@ float lastTime = 0.0f;
 
 bool animation_play = false;
 
-void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+void framebuffer_size_callback(GLFWwindow *window, int width, int height)
 {
-	// make sure the viewport matches the new window dimensions; note that width and 
+	// make sure the viewport matches the new window dimensions; note that width and
 	// height will be significantly larger than specified on retina displays.
 	glViewport(0, 0, width, height);
 }
 
-void mouse_callback(GLFWwindow* window, double xPos, double yPos)
+void mouse_callback(GLFWwindow *window, double xPos, double yPos)
 {
 	if (firstMouse)
 	{
@@ -54,78 +53,87 @@ void mouse_callback(GLFWwindow* window, double xPos, double yPos)
 		firstMouse = false;
 	}
 
-	float xOffset = xPos - lastX;
-	float yOffset = lastY - yPos; // reversed since y-coordinates go from bottom to top
+	float xoffset = xPos - lastX;
+	float yoffset = lastY - yPos; // reversed since y-coordinates go from bottom to top
 
 	lastX = xPos;
 	lastY = yPos;
 
-	camera.rotate(xOffset, yOffset);
+	camera.rotate(xoffset, yoffset);
 }
 
 // glfw: whenever the mouse scroll wheel scrolls, this callback is called
 // ----------------------------------------------------------------------
-void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+void scroll_callback(GLFWwindow *window, double xoffset, double yoffset)
 {
 	camera.zoom(yoffset);
 }
 
-void keyboard_callback(GLFWwindow* window)
+void keyboard_callback(GLFWwindow *window)
 {
-	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) camera.translate(FORWARD, deltaTime);
-	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) camera.translate(LEFT, deltaTime);
-	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) camera.translate(BACKWARD, deltaTime);
-	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) camera.translate(RIGHT, deltaTime);
-	if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS) animation_play = !animation_play;
-	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) glfwSetWindowShouldClose(window, true);
-
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+		camera.translate(FORWARD, deltaTime);
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+		camera.translate(LEFT, deltaTime);
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+		camera.translate(BACKWARD, deltaTime);
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+		camera.translate(RIGHT, deltaTime);
+	if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS)
+		animation_play = !animation_play;
+	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+		glfwSetWindowShouldClose(window, true);
 }
 
-static void error_callback(int error, const char *msg) {
-    cerr << "GLWT error " << error << ": " << msg << endl;
+static void error_callback(int error, const char *msg)
+{
+	cerr << "GLWT error " << error << ": " << msg << endl;
 }
 
-void setVertex(GLuint *VAO, GLuint *VBO, int buffer_size, float *buffer, bool ifStatic) {
-    glGenVertexArrays(1, VAO);
-    glGenBuffers(1, VBO);
-    glBindBuffer(GL_ARRAY_BUFFER, *VBO);
-    glBufferData(GL_ARRAY_BUFFER, buffer_size, buffer, ifStatic ? GL_STATIC_DRAW : GL_DYNAMIC_DRAW);
-    glBindVertexArray(*VAO);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
-    glEnableVertexAttribArray(1);
-    glBindVertexArray(0);
+void setVertex(GLuint *VAO, GLuint *VBO, int buffer_size, float *buffer, bool ifStatic)
+{
+	glGenVertexArrays(1, VAO);
+	glGenBuffers(1, VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, *VBO);
+	glBufferData(GL_ARRAY_BUFFER, buffer_size, buffer, ifStatic ? GL_STATIC_DRAW : GL_DYNAMIC_DRAW);
+	glBindVertexArray(*VAO);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *)0);
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *)(3 * sizeof(float)));
+	glEnableVertexAttribArray(1);
+	glBindVertexArray(0);
 }
 
-void setVertex2D(GLuint *VAO, GLuint *VBO, int buffer_size, float *buffer, bool ifStatic) {
-    glGenVertexArrays(1, VAO);
-    glGenBuffers(1, VBO);
-    glBindBuffer(GL_ARRAY_BUFFER, *VBO);
-    glBufferData(GL_ARRAY_BUFFER, buffer_size, buffer, ifStatic ? GL_STATIC_DRAW : GL_DYNAMIC_DRAW);
-    glBindVertexArray(*VAO);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-    glBindVertexArray(0);
+void setVertex2D(GLuint *VAO, GLuint *VBO, int buffer_size, float *buffer, bool ifStatic)
+{
+	glGenVertexArrays(1, VAO);
+	glGenBuffers(1, VBO);
+	glBindBuffer(GL_ARRAY_BUFFER, *VBO);
+	glBufferData(GL_ARRAY_BUFFER, buffer_size, buffer, ifStatic ? GL_STATIC_DRAW : GL_DYNAMIC_DRAW);
+	glBindVertexArray(*VAO);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void *)0);
+	glEnableVertexAttribArray(0);
+	glBindVertexArray(0);
 }
 void run()
 {
 	simulator = new Simulator;
 
-    glfwSetErrorCallback(error_callback);
+	glfwSetErrorCallback(error_callback);
 
-	if (glfwInit() == GL_FALSE) {
-	    cout << "Failed to init GLFW!" << endl;
-	    return;
+	if (glfwInit() == GL_FALSE)
+	{
+		cout << "Failed to init GLFW!" << endl;
+		return;
 	};
 
-    // set opengl version
+	// set opengl version
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_SAMPLES, 4);
-	GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "EOL_SIM", NULL, NULL);
+	GLFWwindow *window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "EOL_SIM", NULL, NULL);
 
 	if (window == NULL)
 	{
@@ -133,7 +141,7 @@ void run()
 		glfwTerminate();
 		return;
 	}
-    // init glfw
+	// init glfw
 	glfwMakeContextCurrent(window);
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 	glfwSetCursorPosCallback(window, mouse_callback);
@@ -146,50 +154,74 @@ void run()
 	glEnable(GL_MULTISAMPLE);
 
 	// init shader
-    Shader worldShader("/Users/apple/CLionProjects/eol-cloth/src/shader/world.vs", "/Users/apple/CLionProjects/eol-cloth/src/shader/world.fs");
-//    Shader worldShader("/Users/apple/CLionProjects/eol-cloth/src/shader/phong.vs", "/Users/apple/CLionProjects/eol-cloth/src/shader/phong.fs");
+	Shader worldShader("/Users/apple/CLionProjects/eol-cloth/src/shader/world.vs", "/Users/apple/CLionProjects/eol-cloth/src/shader/world.fs");
+	//    Shader worldShader("/Users/apple/CLionProjects/eol-cloth/src/shader/phong.vs", "/Users/apple/CLionProjects/eol-cloth/src/shader/phong.fs");
 	Shader meshShader("/Users/apple/CLionProjects/eol-cloth/src/shader/mesh.vs", "/Users/apple/CLionProjects/eol-cloth/src/shader/mesh.fs");
 
 	// init cube
-    vector<GLuint> cubeVao(10);
-    vector<GLuint> cubeVbo(10);
-    for (int i = 0; i < simulator->obstacle->box_num; i++) {
-        setVertex(&cubeVao[i], &cubeVbo[i], simulator->obstacle->boxes[i]->buffer_size,simulator->obstacle->boxes[i]->buffer, true);
-    }
+	vector<GLuint> cubeVao(10);
+	vector<GLuint> cubeVbo(10);
+	for (int i = 0; i < simulator->obstacle->box_num; i++)
+	{
+		setVertex(&cubeVao[i], &cubeVbo[i], simulator->obstacle->boxes[i]->buffer_size, simulator->obstacle->boxes[i]->buffer, true);
+	}
 //    GLuint cubeVAO, cubeVBO;
 //    setVertex(&cubeVAO, &cubeVBO, simulator->obstacle->boxes[0]->buffer_size,simulator->obstacle->boxes[0]->buffer, true);
 //
 //    GLuint cube1VAO, cube1VBO;
 //    setVertex(&cube1VAO, &cube1VBO, simulator->obstacle->boxes[1]->buffer_size,simulator->obstacle->boxes[1]->buffer, true);
 
-    // niddle
-	float niddle[] = {0.751,0.751,-0.005, 0.751,1.751,-0.005,
-//					  0.71,0.22,-0.005, 0.71,0.22,-1.005,
-//					  0.27,0.51,-0.005, 0.27,0.51,-1.005,
-//                      0.17,0.31,-0.005, 0.17,0.31,-1.005
-					  };
+// niddle
+#define offset 0.25
+	// float niddle[] = {
+	// 	0.0 + offset,
+	// 	0.0 + offset,
+	// 	-0.005,
+	// 	0.0 + offset,
+	// 	0.0 + offset,
+	// 	-1.005,
+	// 	1.0 - offset,
+	// 	0.0 + offset,
+	// 	-0.005,
+	// 	1.0 - offset,
+	// 	0.0 + offset,
+	// 	-1.005,
+	// 	0.0 + offset,
+	// 	1.0 - offset,
+	// 	-0.005,
+	// 	0.0 + offset,
+	// 	1.0 - offset,
+	// 	-1.005,
+	// 	1.0 - offset,
+	// 	1.0 - offset,
+	// 	-0.005,
+	// 	1.0 - offset,
+	// 	1.0 - offset,
+	// 	-1.005,
+	// };
+
+	float niddle[] = {0.5, 0.5, -0.005, 0.5, 0.5, -1.005};
 	GLuint pointVAO, pointVBO;
-    setVertex2D(&pointVAO, &pointVBO, sizeof(float) * 6, niddle, true);
+	setVertex2D(&pointVAO, &pointVBO, sizeof(float) * 6, niddle, true);
 
-
-    // cloth
+	// cloth
 	GLuint clothVAO, clothVBO;
-    setVertex(&clothVAO, &clothVBO, simulator->cloth->buffer_size, simulator->cloth->buffer, false);
+	setVertex(&clothVAO, &clothVBO, simulator->cloth->buffer_size, simulator->cloth->buffer, false);
 
-    // mesh
+	// mesh
 	GLuint meshVAO, meshVBO;
-    setVertex2D(&meshVAO, &meshVBO, simulator->cloth->mesh_buffer_size, simulator->cloth->mesh_buffer, false);
-
+	setVertex2D(&meshVAO, &meshVBO, simulator->cloth->mesh_buffer_size, simulator->cloth->mesh_buffer, false);
 
 	while (!glfwWindowShouldClose(window))
 	{
 		float currentTime = glfwGetTime();
 		deltaTime = currentTime - lastTime;
 		lastTime = currentTime;
-        std::cout << deltaTime << std::endl;
+		std::cout << deltaTime << std::endl;
 		keyboard_callback(window);
 
-		if (animation_play) simulator->step();
+		if (animation_play)
+			simulator->step();
 
 		// remesh
 		glBindBuffer(GL_ARRAY_BUFFER, meshVBO);
@@ -197,17 +229,16 @@ void run()
 		glBindBuffer(GL_ARRAY_BUFFER, clothVBO);
 		glBufferData(GL_ARRAY_BUFFER, simulator->cloth->buffer_size, simulator->cloth->buffer, GL_DYNAMIC_DRAW);
 
-
 		//float* ptr = (float*)glMapBuffer(GL_ARRAY_BUFFER, GL_READ_WRITE);
 		//memcpy(ptr, simulator->cloth->buffer, simulator->cloth->buffer_size);
 		//glUnmapBuffer(GL_ARRAY_BUFFER);
 
-		glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+		glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		meshShader.use();
 		glBindVertexArray(meshVAO);
-		glDrawArrays(GL_LINES, 0, 6*simulator->cloth->mesh.faces.size());
+		glDrawArrays(GL_LINES, 0, 6 * simulator->cloth->mesh.faces.size());
 
 		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)SCR_WIDTH / (float)SCR_HEIGHT, 0.05f, 100.0f);
 		glm::mat4 view = camera.getViewMatrix();
@@ -215,7 +246,8 @@ void run()
 
 		// Set light and camera
 		worldShader.use();
-		worldShader.setVec3("light.position", glm::vec3(1.2, 1.2, 1.8));
+		worldShader.setVec3("light.position", glm::vec3(1.2, 1.2, 1.5));
+		// worldShader.setVec3("light.position", camera.Position);
 		worldShader.setVec3("viewPos", camera.Position);
 
 		glm::vec3 lightColor = glm::vec3(1.0f);
@@ -225,33 +257,33 @@ void run()
 		worldShader.setVec3("light.diffuse", diffuseColor);
 		worldShader.setVec3("light.specular", 1.0f, 1.0f, 1.0f);
 
-        worldShader.setMat4("projection", projection);
-        worldShader.setMat4("view", view);
-        worldShader.setMat4("model", model);
+		worldShader.setMat4("projection", projection);
+		worldShader.setMat4("view", view);
+		worldShader.setMat4("model", model);
 
-        for (int i = 0; i < simulator->obstacle->box_num; ++i) {
-            // Draw Cube
-            worldShader.setVec3("material.ambient", 0.5f, 0.0f, 0.1f);
-            worldShader.setVec3("material.diffuse", 0.9f, 0.5f, 0.3f);
-            worldShader.setVec3("material.specular", 0.1f, 0.1f, 0.1f);
-            worldShader.setFloat("material.shininess", 1.0f);
-            glBindVertexArray(cubeVao[i]);
-            glDrawArrays(GL_TRIANGLES, 0, 36);
-        }
+		for (int i = 0; i < simulator->obstacle->box_num; ++i)
+		{
+			// Draw Cube
+			worldShader.setVec3("material.ambient", 0.0f, 0.1f, 0.06f);
+			worldShader.setVec3("material.diffuse", 0.0f, 0.5098f, 0.5098f);
+			worldShader.setVec3("material.specular", 0.5019f, 0.5019f, 0.5019f);
+			worldShader.setFloat("material.shininess", 0.25f);
+			glBindVertexArray(cubeVao[i]);
+			glDrawArrays(GL_TRIANGLES, 0, 36);
+		}
 
 		// draw point cloud
-//		glBindVertexArray(pointVAO);
-//		glDrawArrays(GL_LINES, 0, 2);
-
+		// meshShader.use();
+		// glBindVertexArray(pointVAO);
+		// glDrawArrays(GL_LINES, 0, 2);
 
 		// Draw the Cloth
-		worldShader.setVec3("material.ambient", 0.5f, 0.5f, 0.5f);
-		worldShader.setVec3("material.diffuse", 0.5f, 0.0f, 0.0f);
-		worldShader.setVec3("material.specular", 0.1f, 0.1f, 0.1f);
-		worldShader.setFloat("material.shininess", 1.0f);
+		worldShader.setVec3("material.ambient", 0.05f, 0.0f, 0.0f);
+		worldShader.setVec3("material.diffuse", 0.5f, 0.4f, 0.4f);
+		worldShader.setVec3("material.specular", 0.7f, 0.04f, 0.04f);
+		worldShader.setFloat("material.shininess", 0.078125f);
 		glBindVertexArray(clothVAO);
 		glDrawArrays(GL_TRIANGLES, 0, 3 * simulator->cloth->mesh.faces.size());
-
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
@@ -259,14 +291,6 @@ void run()
 
 	glfwTerminate();
 	return;
-
-
-
 }
-
-
-
-
-
 
 #endif

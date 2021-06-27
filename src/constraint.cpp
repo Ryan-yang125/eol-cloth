@@ -15,7 +15,7 @@ Constraint::Constraint()
 	occur_collision = false;
 }
 
-void Constraint::updateConstraint(const Obstacle* obstacle)
+void Constraint::updateConstraint(const Obstacle *obstacle)
 {
 	int total_size = obstacle->point_cloud->point_num;
 
@@ -35,7 +35,7 @@ void Constraint::updateConstraint(const Obstacle* obstacle)
 	{
 		for (int p = 0; p < obstacle->boxes[b]->point_num; p++)
 		{
-			int index = obstacle->point_cloud->point_num + (b* obstacle->boxes[b]->point_num) + (b* obstacle->boxes[b]->edge_num) + p;
+			int index = obstacle->point_cloud->point_num + (b * obstacle->boxes[b]->point_num) + (b * obstacle->boxes[b]->edge_num) + p;
 			Vector3d corner_nor = Vector3d::Zero();
 			for (int i = 0; i < 3; i++)
 			{
@@ -46,11 +46,10 @@ void Constraint::updateConstraint(const Obstacle* obstacle)
 			}
 			corner_nor /= 6.0;
 			constraint_matrix.block(0, index, 3, 1) = corner_nor.normalized();
-
 		}
 		for (int e = 0; e < obstacle->boxes[b]->edge_num; e++)
 		{
-			int index = obstacle->point_cloud->point_num + (b* obstacle->boxes[b]->point_num) + (b* obstacle->boxes[b]->edge_num) + (obstacle->boxes[b]->point_num + e);
+			int index = obstacle->point_cloud->point_num + (b * obstacle->boxes[b]->point_num) + (b * obstacle->boxes[b]->edge_num) + (obstacle->boxes[b]->point_num + e);
 			constraint_matrix.block(0, index, 3, 1) = obstacle->boxes[b]->face_norm.col(obstacle->boxes[b]->edge_face(0, e));
 			constraint_matrix.block(3, index, 3, 1) = obstacle->boxes[b]->face_norm.col(obstacle->boxes[b]->edge_face(1, e));
 			constraint_matrix.block(6, index, 3, 1) = obstacle->boxes[b]->face_norm.col(obstacle->boxes[b]->edge_direction(e));
@@ -58,7 +57,7 @@ void Constraint::updateConstraint(const Obstacle* obstacle)
 	}
 }
 
-void Constraint::applyConstraint(const Mesh&mesh, const Obstacle* obstacle, double h, double t)
+void Constraint::applyConstraint(const Mesh &mesh, const Obstacle *obstacle, double h, double t)
 {
 	updateConstraint(obstacle);
 
@@ -66,8 +65,8 @@ void Constraint::applyConstraint(const Mesh&mesh, const Obstacle* obstacle, doub
 
 	vector<T> _Aeq;
 	vector<T> _Aineq;
-	vector< pair<int, double> > _beq;
-	vector< pair<int, double> > _bineq;
+	vector<pair<int, double>> _beq;
+	vector<pair<int, double>> _bineq;
 
 	int eqsize = 0;
 	int ineqsize = 0;
@@ -84,11 +83,11 @@ void Constraint::applyConstraint(const Mesh&mesh, const Obstacle* obstacle, doub
 				ortho2.normalize();
 
 				bool is_flat = true;
-				Node* node = mesh.nodes[n];
-				Face* face0 = node->verts[0]->adjf[0];
+				Node *node = mesh.nodes[n];
+				Face *face0 = node->verts[0]->adjf[0];
 				for (int f = 1; f < node->verts[0]->adjf.size(); f++)
 				{
-					Face* face1 = node->verts[0]->adjf[f];
+					Face *face1 = node->verts[0]->adjf[f];
 					if (get_angle(face0->n, face1->n) > 0.5)
 					{
 						is_flat = false;
@@ -141,16 +140,16 @@ void Constraint::applyConstraint(const Mesh&mesh, const Obstacle* obstacle, doub
 				}
 			}
 			// not collision but EOL
-			else 
+			else
 			{
-				Node* node = mesh.nodes[n];
+				Node *node = mesh.nodes[n];
 
 				bool is_flat = true;
-				Face* face0 = node->verts[0]->adjf[0];
+				Face *face0 = node->verts[0]->adjf[0];
 				for (int f = 1; f < node->verts[0]->adjf.size(); f++)
 				{
-					Face* face1 = node->verts[0]->adjf[f];
-					if (get_angle(face0->n, face1->n) > 0.1) 
+					Face *face1 = node->verts[0]->adjf[f];
+					if (get_angle(face0->n, face1->n) > 0.1)
 					{
 						is_flat = false;
 						break;
@@ -173,7 +172,7 @@ void Constraint::applyConstraint(const Mesh&mesh, const Obstacle* obstacle, doub
 
 					eqsize++;
 				}
-				else 
+				else
 				{
 					_Aineq.push_back(T(ineqsize, n * 3, -constraint_matrix(0, node->cdEdges[0])));
 					_Aineq.push_back(T(ineqsize, n * 3 + 1, -constraint_matrix(1, node->cdEdges[0])));
@@ -189,18 +188,18 @@ void Constraint::applyConstraint(const Mesh&mesh, const Obstacle* obstacle, doub
 				}
 
 				// If a boundary, the Eulerian constraint stops it from moving outside
-				if (is_seam_or_boundary(node)) 
+				if (is_seam_or_boundary(node))
 				{
-					Edge* edge=NULL;
-					for (int e = 0; e < node->adje.size(); e++) 
+					Edge *edge = NULL;
+					for (int e = 0; e < node->adje.size(); e++)
 					{
-						if (is_seam_or_boundary(node->adje[e])) 
+						if (is_seam_or_boundary(node->adje[e]))
 						{
 							edge = node->adje[e];
 							break;
 						}
 					}
-					Node* opp_node = other_node(edge, node);
+					Node *opp_node = other_node(edge, node);
 					// This should be orthogonal to the edge connecting the two nodes
 					Vector2d orth_border = Vector2d(node->verts[0]->u[1] - opp_node->verts[0]->u[1], -node->verts[0]->u[0] - opp_node->verts[0]->u[0]).normalized();
 					_Aeq.push_back(T(eqsize, mesh.nodes.size() * 3 + node->EoL_index * 2, orth_border(0)));
@@ -209,19 +208,19 @@ void Constraint::applyConstraint(const Mesh&mesh, const Obstacle* obstacle, doub
 					eqsize++;
 				}
 				// If internal, the Eulerian constraint forces tangential motion to realize in the Lagrangian space
-				else 
+				else
 				{
 					Vector2d average_tan = Vector2d::Zero();
-					for (int e = 0; e < node->adje.size(); e++) 
+					for (int e = 0; e < node->adje.size(); e++)
 					{
-						if (node->adje[e]->preserve) 
+						if (node->adje[e]->preserve)
 						{
-							Edge* edge = node->adje[e];
-							if (norm(edge->n[0]->verts[0]->u) > norm(edge->n[1]->verts[0]->u)) 
+							Edge *edge = node->adje[e];
+							if (norm(edge->n[0]->verts[0]->u) > norm(edge->n[1]->verts[0]->u))
 							{
 								average_tan += Vector2d(edge->n[1]->verts[0]->u[0] - edge->n[0]->verts[0]->u[0], edge->n[1]->verts[0]->u[1] - edge->n[0]->verts[0]->u[1]).normalized();
 							}
-							else 
+							else
 							{
 								average_tan += Vector2d(edge->n[0]->verts[0]->u[0] - edge->n[1]->verts[0]->u[0], edge->n[0]->verts[0]->u[1] - edge->n[1]->verts[0]->u[1]).normalized();
 							}
@@ -237,23 +236,25 @@ void Constraint::applyConstraint(const Mesh&mesh, const Obstacle* obstacle, doub
 		}
 	}
 
-	vector<Collision* > clsLAG;
+	vector<Collision *> clsLAG;
 	Find_Collision_(mesh, obstacle, clsLAG);
 	for (int i = 0; i < clsLAG.size(); i++)
 	{
-		if (clsLAG[i]->count1 == 3 && clsLAG[i]->count2 == 1) 
+		if (clsLAG[i]->count1 == 3 && clsLAG[i]->count2 == 1)
 		{
-			if (mesh.nodes[clsLAG[i]->verts2(0)]->EoL) continue;
+			if (mesh.nodes[clsLAG[i]->verts2(0)]->EoL)
+				continue;
 			_Aineq.push_back(T(ineqsize, clsLAG[i]->verts2(0) * 3, -clsLAG[i]->nor1(0)));
 			_Aineq.push_back(T(ineqsize, clsLAG[i]->verts2(0) * 3 + 1, -clsLAG[i]->nor1(1)));
 			_Aineq.push_back(T(ineqsize, clsLAG[i]->verts2(0) * 3 + 2, -clsLAG[i]->nor1(2)));
 
 			ineqsize++;
 		}
-		else if (clsLAG[i]->count1 == 2 && clsLAG[i]->count2 == 2) 
+		else if (clsLAG[i]->count1 == 2 && clsLAG[i]->count2 == 2)
 		{
-			if (mesh.nodes[clsLAG[i]->verts2(0)]->EoL || mesh.nodes[clsLAG[i]->verts2(1)]->EoL) continue;
-			for (int j = 0; j < 2; j++) 
+			if (mesh.nodes[clsLAG[i]->verts2(0)]->EoL || mesh.nodes[clsLAG[i]->verts2(1)]->EoL)
+				continue;
+			for (int j = 0; j < 2; j++)
 			{
 				_Aineq.push_back(T(ineqsize, clsLAG[i]->verts2(j) * 3, -clsLAG[i]->nor2(0) * clsLAG[i]->weights2(j)));
 				_Aineq.push_back(T(ineqsize, clsLAG[i]->verts2(j) * 3 + 1, -clsLAG[i]->nor2(1) * clsLAG[i]->weights2(j)));
@@ -262,10 +263,11 @@ void Constraint::applyConstraint(const Mesh&mesh, const Obstacle* obstacle, doub
 
 			ineqsize++;
 		}
-		else if (clsLAG[i]->count1 == 1 && clsLAG[i]->count2 == 3) 
+		else if (clsLAG[i]->count1 == 1 && clsLAG[i]->count2 == 3)
 		{
-			if (mesh.nodes[clsLAG[i]->verts2(0)]->EoL || mesh.nodes[clsLAG[i]->verts2(1)]->EoL || mesh.nodes[clsLAG[i]->verts2(2)]->EoL) continue;
-			for (int j = 0; j < 3; j++) 
+			if (mesh.nodes[clsLAG[i]->verts2(0)]->EoL || mesh.nodes[clsLAG[i]->verts2(1)]->EoL || mesh.nodes[clsLAG[i]->verts2(2)]->EoL)
+				continue;
+			for (int j = 0; j < 3; j++)
 			{
 				_Aineq.push_back(T(ineqsize, clsLAG[i]->verts2(j) * 3, -clsLAG[i]->nor2(0) * clsLAG[i]->weights2(j)));
 				_Aineq.push_back(T(ineqsize, clsLAG[i]->verts2(j) * 3 + 1, -clsLAG[i]->nor2(1) * clsLAG[i]->weights2(j)));
@@ -276,65 +278,77 @@ void Constraint::applyConstraint(const Mesh&mesh, const Obstacle* obstacle, doub
 		}
 	}
 
-	if (ineqsize > 0) occur_collision = true;
+	if (ineqsize > 0)
+		occur_collision = true;
 
-    // TODO Interactive section lol
-	if (t < 0.345)
+	// TODO Interactive section lol
+	bool drag = true;
+	bool two = false;
+	if (drag)
 	{
+		// 0.345
+		if (t < 0.105)
+		{
 
-		_Aeq.push_back(T(eqsize, 2 * 3, 1.0));
-		_beq.push_back(make_pair(eqsize, mesh.nodes[2]->v[0]));
-		eqsize++;
+			_Aeq.push_back(T(eqsize, 2 * 3, 1.0));
+			_beq.push_back(make_pair(eqsize, mesh.nodes[2]->v[0]));
+			eqsize++;
 
-		_Aeq.push_back(T(eqsize, 2 * 3 + 1, 1.0));
-		_beq.push_back(make_pair(eqsize, mesh.nodes[2]->v[1]));
-		eqsize++;
+			_Aeq.push_back(T(eqsize, 2 * 3 + 1, 1.0));
+			_beq.push_back(make_pair(eqsize, mesh.nodes[2]->v[1]));
+			eqsize++;
 
-		_Aeq.push_back(T(eqsize, 2 * 3 + 2, 1.0));
-		_beq.push_back(make_pair(eqsize, mesh.nodes[2]->v[2]));
-		eqsize++;
+			_Aeq.push_back(T(eqsize, 2 * 3 + 2, 1.0));
+			_beq.push_back(make_pair(eqsize, mesh.nodes[2]->v[2]));
+			eqsize++;
 
-		_Aeq.push_back(T(eqsize, 8 * 3, 1.0));
-		_beq.push_back(make_pair(eqsize, mesh.nodes[8]->v[0]));
-		eqsize++;
+			_Aeq.push_back(T(eqsize, 8 * 3, 1.0));
+			_beq.push_back(make_pair(eqsize, mesh.nodes[8]->v[0]));
+			eqsize++;
 
-		_Aeq.push_back(T(eqsize, 8 * 3 + 1, 1.0));
-		_beq.push_back(make_pair(eqsize, mesh.nodes[8]->v[1]));
-		eqsize++;
+			_Aeq.push_back(T(eqsize, 8 * 3 + 1, 1.0));
+			_beq.push_back(make_pair(eqsize, mesh.nodes[8]->v[1]));
+			eqsize++;
 
-		_Aeq.push_back(T(eqsize, 8 * 3 + 2, 1.0));
-		_beq.push_back(make_pair(eqsize, mesh.nodes[8]->v[2]));
-		eqsize++;
+			_Aeq.push_back(T(eqsize, 8 * 3 + 2, 1.0));
+			_beq.push_back(make_pair(eqsize, mesh.nodes[8]->v[2]));
+			eqsize++;
+		}
+		else
+		{
+			_Aeq.push_back(T(eqsize, 2 * 3, 1.0));
+			_beq.push_back(make_pair(eqsize, mesh.nodes[2]->v[0] + 0.2));
+			eqsize++;
 
+			_Aeq.push_back(T(eqsize, 2 * 3 + 1, 1.0));
+			_beq.push_back(make_pair(eqsize, mesh.nodes[2]->v[1]));
+			eqsize++;
+
+			_Aeq.push_back(T(eqsize, 2 * 3 + 2, 1.0));
+			_beq.push_back(make_pair(eqsize, mesh.nodes[2]->v[2]));
+			eqsize++;
+
+			_Aeq.push_back(T(eqsize, 8 * 3, 1.0));
+			if (two)
+			{
+				_beq.push_back(make_pair(eqsize, mesh.nodes[8]->v[0] + 0.2));
+			}
+			else
+			{
+				_beq.push_back(make_pair(eqsize, mesh.nodes[8]->v[0]));
+			}
+			eqsize++;
+
+			_Aeq.push_back(T(eqsize, 8 * 3 + 1, 1.0));
+			_beq.push_back(make_pair(eqsize, mesh.nodes[8]->v[1]));
+			eqsize++;
+
+			_Aeq.push_back(T(eqsize, 8 * 3 + 2, 1.0));
+			_beq.push_back(make_pair(eqsize, mesh.nodes[8]->v[2]));
+			eqsize++;
+		}
 	}
-	else
-	{
-		_Aeq.push_back(T(eqsize, 2 * 3, 1.0));
-		_beq.push_back(make_pair(eqsize, mesh.nodes[2]->v[0]+0.2));
-		eqsize++;
 
-		_Aeq.push_back(T(eqsize, 2 * 3 + 1, 1.0));
-		_beq.push_back(make_pair(eqsize, mesh.nodes[2]->v[1]));
-		eqsize++;
-
-		_Aeq.push_back(T(eqsize, 2 * 3 + 2, 1.0));
-		_beq.push_back(make_pair(eqsize, mesh.nodes[2]->v[2]));
-		eqsize++;
-
-
-		_Aeq.push_back(T(eqsize, 8 * 3, 1.0));
-		_beq.push_back(make_pair(eqsize, mesh.nodes[8]->v[0]+0.2));
-		eqsize++;
-
-		_Aeq.push_back(T(eqsize, 8 * 3 + 1, 1.0));
-		_beq.push_back(make_pair(eqsize, mesh.nodes[8]->v[1]));
-		eqsize++;
-
-		_Aeq.push_back(T(eqsize, 8 * 3 + 2, 1.0));
-		_beq.push_back(make_pair(eqsize, mesh.nodes[8]->v[2]));
-		eqsize++;
-	}
-	
 	// up node 2  z:0.1
 	// forward both 2 & 8 fix -> both 2 & 8 x:0.2
 	// fall down nothing
@@ -349,13 +363,12 @@ void Constraint::applyConstraint(const Mesh&mesh, const Obstacle* obstacle, doub
 
 	beq.setZero();
 	bineq.setZero();
-	for (int i = 0; i < _beq.size(); i++) 
+	for (int i = 0; i < _beq.size(); i++)
 	{
 		beq(_beq[i].first) = _beq[i].second;
 	}
-	for (int i = 0; i < _bineq.size(); i++) 
+	for (int i = 0; i < _bineq.size(); i++)
 	{
 		bineq(_bineq[i].first) = _bineq[i].second;
 	}
 }
-

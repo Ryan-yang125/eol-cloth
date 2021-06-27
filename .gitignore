@@ -8,6 +8,8 @@
 .idea/**/dictionaries
 .idea/**/shelf
 
+.vscode/
+build/
 # AWS User-specific
 .idea/**/aws.xml
 
