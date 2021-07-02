@@ -38,10 +38,11 @@ Simulator::Simulator()
 	obstacle->boxes.push_back(box);
 
 	// double offset = 0.3;
-	// Box *box1 = new Box(Vector3d(1.0, 1.0, 1.0), Vector3d(0.0 - offset, 0.0 - offset, -0.549));
-	// Box *box2 = new Box(Vector3d(1.0, 1.0, 1.0), Vector3d(1.0 + offset, 1.0 + offset, -0.549));
-	// Box *box3 = new Box(Vector3d(1.0, 1.0, 1.0), Vector3d(1.0 + offset, 0.0 - offset, -0.549));
-	// Box *box4 = new Box(Vector3d(1.0, 1.0, 1.0), Vector3d(0.0 - offset, 1.0 + offset, -0.549));
+	// double height = -0.519;
+	// Box *box1 = new Box(Vector3d(1.0, 1.0, 1.0), Vector3d(0.0 - offset, 0.0 - offset, height));
+	// Box *box2 = new Box(Vector3d(1.0, 1.0, 1.0), Vector3d(1.0 + offset, 1.0 + offset, height));
+	// Box *box3 = new Box(Vector3d(1.0, 1.0, 1.0), Vector3d(1.0 + offset, 0.0 - offset, height));
+	// Box *box4 = new Box(Vector3d(1.0, 1.0, 1.0), Vector3d(0.0 - offset, 1.0 + offset, height));
 	// //
 	// obstacle->boxes.push_back(box1);
 	// obstacle->boxes.push_back(box2);

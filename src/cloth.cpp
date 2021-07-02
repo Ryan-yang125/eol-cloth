@@ -387,7 +387,9 @@ void Cloth::createClothBuffer()
 	delete mesh_buffer;
 	buffer = (float *)malloc(sizeof(float) * mesh.faces.size() * 3 * 6);
 	mesh_buffer = (float *)malloc(sizeof(float) * mesh.faces.size() * 6 * 3);
-	std::cout << mesh.faces.size() << std::endl;
+
+	std::cout << "Faces: " << mesh.faces.size() << std::endl;
+
 	for (int i = 0; i < mesh.faces.size(); i++)
 	{
 		buffer[i * 18] = mesh.faces[i]->v[0]->node->x[0];

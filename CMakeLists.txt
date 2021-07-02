@@ -40,6 +40,5 @@ target_link_libraries(${CMAKE_PROJECT_NAME} ${OPENGL} ${GLEW_LINK} ${GLFW_LINK} 
 
 # for mac
 if (APPLE)
-#    add_custom_target(Add_Mosek_Target COMMAND ${CMAKE_COMMAND} -E install_name_tool -change libmosek64.8.1.dylib /Users/apple/mosek/8/tools/platform/osx64x86/bin/libmosek64.8.1.dylib eol_cloth)
     target_link_libraries(${CMAKE_PROJECT_NAME} "-framework OpenGL -framework GLUT -framework Cocoa -framework IOKit -framework CoreVideo")
 endif()

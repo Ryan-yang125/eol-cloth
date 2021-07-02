@@ -117,6 +117,7 @@ void setVertex2D(GLuint *VAO, GLuint *VBO, int buffer_size, float *buffer, bool 
 }
 void run()
 {
+	cout << "Start" << endl;
 	simulator = new Simulator;
 
 	glfwSetErrorCallback(error_callback);
@@ -217,7 +218,9 @@ void run()
 		float currentTime = glfwGetTime();
 		deltaTime = currentTime - lastTime;
 		lastTime = currentTime;
-		// std::cout << deltaTime << std::endl;
+
+		std::cout << "TimeStep: " << deltaTime << std::endl;
+
 		keyboard_callback(window);
 
 		if (animation_play)
