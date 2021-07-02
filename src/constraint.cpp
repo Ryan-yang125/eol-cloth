@@ -282,7 +282,7 @@ void Constraint::applyConstraint(const Mesh &mesh, const Obstacle *obstacle, dou
 		occur_collision = true;
 
 	// TODO Interactive section lol
-	bool drag = true;
+	bool drag = false;
 	bool two = false;
 	if (drag)
 	{

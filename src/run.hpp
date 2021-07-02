@@ -217,7 +217,7 @@ void run()
 		float currentTime = glfwGetTime();
 		deltaTime = currentTime - lastTime;
 		lastTime = currentTime;
-		std::cout << deltaTime << std::endl;
+		// std::cout << deltaTime << std::endl;
 		keyboard_callback(window);
 
 		if (animation_play)

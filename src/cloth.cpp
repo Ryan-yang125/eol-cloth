@@ -14,7 +14,7 @@
 using namespace Eigen;
 using namespace std;
 
-Cloth::Cloth(Vector2i res, VectorXd& xX00, VectorXd& xX01, VectorXd& xX10, VectorXd& xX11)
+Cloth::Cloth(Vector2i res, VectorXd &xX00, VectorXd &xX01, VectorXd &xX10, VectorXd &xX11)
 {
 	constraint = new Constraint;
 	force = new Force;
@@ -40,27 +40,27 @@ Cloth::Cloth(Vector2i res, VectorXd& xX00, VectorXd& xX01, VectorXd& xX10, Vecto
 	boundary.block<3, 1>(0, 2) = X11;
 	boundary.block<3, 1>(0, 3) = X10;
 
-	for (int i = 0; i < res(0); ++i) 
+	for (int i = 0; i < res(0); ++i)
 	{
 		double u = i / (res(0) - 1.0);
-		Vector3d x0 = (1 - u)*x00 + u * x10;
-		Vector3d x1 = (1 - u)*x01 + u * x11;
-		Vector3d X0 = (1 - u)*X00 + u * X10;
-		Vector3d X1 = (1 - u)*X01 + u * X11;
-		for (int j = 0; j < res(1); ++j) 
+		Vector3d x0 = (1 - u) * x00 + u * x10;
+		Vector3d x1 = (1 - u) * x01 + u * x11;
+		Vector3d X0 = (1 - u) * X00 + u * X10;
+		Vector3d X1 = (1 - u) * X01 + u * X11;
+		for (int j = 0; j < res(1); ++j)
 		{
 			double v = j / (res(1) - 1.0);
-			Vector3d x = (1 - v)*x0 + v * x1;
-			Vector3d X = (1 - v)*X0 + v * X1;
+			Vector3d x = (1 - v) * x0 + v * x1;
+			Vector3d X = (1 - v) * X0 + v * X1;
 			mesh.add(new Vert(e2v(X), Vec3(0)));
 			mesh.add(new Node(e2v(x), e2v(x), Vec3(0), 0, 0, false));
 			connect(mesh.verts.back(), mesh.nodes.back());
 		}
 	}
 
-	for (int i = 0; i < res(0) - 1; ++i) 
+	for (int i = 0; i < res(0) - 1; ++i)
 	{
-		for (int j = 0; j < res(1) - 1; ++j) 
+		for (int j = 0; j < res(1) - 1; ++j)
 		{
 			int k0 = (i * res(1)) + j; // upper right index
 			Vector3d x = (v2e(mesh.nodes[k0]->x) + v2e(mesh.nodes[k0 + 1]->x) + v2e(mesh.nodes[k0 + res(1) + 1]->x) + v2e(mesh.nodes[k0 + res(1)]->x)) / 4;
@@ -75,40 +75,40 @@ Cloth::Cloth(Vector2i res, VectorXd& xX00, VectorXd& xX01, VectorXd& xX10, Vecto
 	{
 		for (int j = 0; j < res(1) - 1; j++)
 		{
-			int k0 = (i * res(1)) + j; // upper right index
+			int k0 = (i * res(1)) + j;						  // upper right index
 			int kc0 = ((res(0) * res(1)) + center_index_cnt); // center index
 			center_index_cnt++;
-			vector<Vert*> verts1;
+			vector<Vert *> verts1;
 			verts1.push_back(mesh.verts[k0]);
 			verts1.push_back(mesh.verts[k0 + 1]);
 			verts1.push_back(mesh.verts[kc0]);
-			vector<Face*> faces1 = triangulateARC(verts1);
+			vector<Face *> faces1 = triangulateARC(verts1);
 			for (int f = 0; f < faces1.size(); f++)
 				mesh.add(faces1[f]);
-			vector<Vert*> verts2;
+			vector<Vert *> verts2;
 			verts2.push_back(mesh.verts[k0 + 1]);
 			verts2.push_back(mesh.verts[k0 + res(1) + 1]);
 			verts2.push_back(mesh.verts[kc0]);
-			vector<Face*> faces2 = triangulateARC(verts2);
+			vector<Face *> faces2 = triangulateARC(verts2);
 			for (int f = 0; f < faces2.size(); f++)
 				mesh.add(faces2[f]);
-			vector<Vert*> verts3;
+			vector<Vert *> verts3;
 			verts3.push_back(mesh.verts[k0 + res(1) + 1]);
 			verts3.push_back(mesh.verts[k0 + res(1)]);
 			verts3.push_back(mesh.verts[kc0]);
-			vector<Face*> faces3 = triangulateARC(verts3);
+			vector<Face *> faces3 = triangulateARC(verts3);
 			for (int f = 0; f < faces3.size(); f++)
 				mesh.add(faces3[f]);
-			vector<Vert*> verts4;
+			vector<Vert *> verts4;
 			verts4.push_back(mesh.verts[k0 + res(1)]);
 			verts4.push_back(mesh.verts[k0]);
 			verts4.push_back(mesh.verts[kc0]);
-			vector<Face*> faces4 = triangulateARC(verts4);
+			vector<Face *> faces4 = triangulateARC(verts4);
 			for (int f = 0; f < faces4.size(); f++)
 				mesh.add(faces4[f]);
 		}
 	}
-	for (int i = 0; i < mesh.faces.size(); i++) 
+	for (int i = 0; i < mesh.faces.size(); i++)
 	{
 		mesh.faces[i]->material = &material;
 	}
@@ -139,7 +139,6 @@ Cloth::Cloth(Vector2i res, VectorXd& xX00, VectorXd& xX01, VectorXd& xX10, Vecto
 	createClothBuffer();
 }
 
-
 void Cloth::saveOldMesh()
 {
 	delete_mesh(old_mesh);
@@ -165,18 +164,18 @@ void Cloth::velocityTransfer()
 	v.setZero();
 
 	// Loop through all of our nodes and update their velocities
-	for (int n = 0; n < mesh.nodes.size(); n++) 
+	for (int n = 0; n < mesh.nodes.size(); n++)
 	{
-		Node* node = mesh.nodes[n];
-		Vert* vert = node->verts[0];
+		Node *node = mesh.nodes[n];
+		Vert *vert = node->verts[0];
 
 		bool found = false;
 		double how_close = 1e-6;
 		int closest = -1;
-		for (int j = 0; j < old_mesh.nodes.size(); j++) 
+		for (int j = 0; j < old_mesh.nodes.size(); j++)
 		{
 			double dist = unsigned_vv_distance(vert->u, old_mesh.nodes[j]->verts[0]->u);
-			if (unsigned_vv_distance(vert->u, old_mesh.nodes[j]->verts[0]->u) < how_close) 
+			if (unsigned_vv_distance(vert->u, old_mesh.nodes[j]->verts[0]->u) < how_close)
 			{
 				how_close = dist;
 				closest = j;
@@ -186,7 +185,7 @@ void Cloth::velocityTransfer()
 		}
 
 		// If the node existed before do one of two things
-		if (found) 
+		if (found)
 		{
 			// TODO THIS is the key point bro!
 			if (node->EoL_state == Node::WasEOL)
@@ -195,7 +194,7 @@ void Cloth::velocityTransfer()
 				MatrixXd F = MatrixXd::Zero(3, 2);
 				Vector3d nodev = v2e(node->v);
 				Vector2d nodeV = v322e(vert->v);
-				for (int j = 0; j < vert->adjf.size(); j++) 
+				for (int j = 0; j < vert->adjf.size(); j++)
 				{
 					F += incedent_angle(vert, vert->adjf[j]) * computeF(vert->adjf[j]);
 				}
@@ -211,7 +210,7 @@ void Cloth::velocityTransfer()
 				v(3 * n) = node->v[0];
 				v(3 * n + 1) = node->v[1];
 				v(3 * n + 2) = node->v[2];
-				if (node->EoL) 
+				if (node->EoL)
 				{
 					v(mesh.nodes.size() * 3 + node->EoL_index * 2) = vert->v[0];
 					v(mesh.nodes.size() * 3 + node->EoL_index * 2 + 1) = vert->v[1];
@@ -220,37 +219,40 @@ void Cloth::velocityTransfer()
 		}
 
 		//newly inserted point
-		else 
+		else
 		{
 			// If its a LAG point we can just use barycentric averaging
-			if (!node->EoL) 
+			if (!node->EoL)
 			{
-				Face* old_face = get_enclosing_face(old_mesh, Vec2(vert->u[0], vert->u[1]));
+				Face *old_face = get_enclosing_face(old_mesh, Vec2(vert->u[0], vert->u[1]));
 				Vec3 bary = get_barycentric_coords(Vec2(vert->u[0], vert->u[1]), old_face);
 				Vector3d vwA = v2e(old_face->v[0]->node->v);
 				Vector3d vwB = v2e(old_face->v[1]->node->v);
 				Vector3d vwC = v2e(old_face->v[2]->node->v);
 
-				if (old_face->v[0]->node->EoL) vwA += -computeF(old_face) * v322e(old_face->v[0]->v);
-				if (old_face->v[1]->node->EoL) vwB += -computeF(old_face) * v322e(old_face->v[1]->v);
-				if (old_face->v[2]->node->EoL) vwC += -computeF(old_face) * v322e(old_face->v[2]->v);
+				if (old_face->v[0]->node->EoL)
+					vwA += -computeF(old_face) * v322e(old_face->v[0]->v);
+				if (old_face->v[1]->node->EoL)
+					vwB += -computeF(old_face) * v322e(old_face->v[1]->v);
+				if (old_face->v[2]->node->EoL)
+					vwC += -computeF(old_face) * v322e(old_face->v[2]->v);
 				Vector3d v_new_world = bary[0] * vwA + bary[1] * vwB + bary[2] * vwC;
 				node->v = e2v(v_new_world);
 				v(3 * n) = v_new_world(0);
 				v(3 * n + 1) = v_new_world(1);
 				v(3 * n + 2) = v_new_world(2);
 			}
-			else 
+			else
 			{
 				if (node->EoL_state == Node::NewEOLFromSplit) // NewEOLFromSplit means this point is derived from 2 known eulerian points, so just average
 				{
 					Vector3d newvL = Vector3d::Zero();
 					Vector3d newvE = Vector3d::Zero();
-					for (int e = 0; e < node->adje.size(); e++) 
+					for (int e = 0; e < node->adje.size(); e++)
 					{
-						if (node->adje[e]->preserve) 
+						if (node->adje[e]->preserve)
 						{
-							Node* adjn = other_node(node->adje[e], node);
+							Node *adjn = other_node(node->adje[e], node);
 							newvL += v2e(adjn->v);
 							newvE += v2e(adjn->verts[0]->v);
 						}
@@ -265,9 +267,9 @@ void Cloth::velocityTransfer()
 					v(3 * n + 1) = newvL(1);
 					v(3 * n + 2) = newvL(2);
 				}
-				else 
+				else
 				{
-					Face* old_face = get_enclosing_face(old_mesh, Vec2(vert->u[0], vert->u[1]));
+					Face *old_face = get_enclosing_face(old_mesh, Vec2(vert->u[0], vert->u[1]));
 					Matrix2d ftf = computeF(old_face).transpose() * computeF(old_face);
 					Vector2d dtv = -computeF(old_face).transpose() * v2e(node->v); // the average v has been done in the function split_face()
 
@@ -302,7 +304,7 @@ void Cloth::solve(double h)
 {
 	VectorXd b = -(force->M * v + h * force->f);
 
-	MatrixXd M(force-> K);
+	MatrixXd M(force->K);
 	MatrixXd I(M.rows(), M.cols());
 	double u = 1.0;
 	I.setIdentity();
@@ -313,11 +315,11 @@ void Cloth::solve(double h)
 	}
 
 	force->K = M.sparseView();
-    // TODO error detect
+	// TODO error detect
 	bool success = mosekSolve(force->K, b, constraint->Aeq, constraint->beq, constraint->Aineq, constraint->bineq, v);
 }
 
-void Cloth::step(Obstacle* obstacle, const Vector3d& gravity, double h, double t)
+void Cloth::step(Obstacle *obstacle, const Vector3d &gravity, double h, double t)
 {
 	velocityTransfer();
 	force->computeForce(mesh, material, gravity, h);
@@ -326,8 +328,8 @@ void Cloth::step(Obstacle* obstacle, const Vector3d& gravity, double h, double t
 
 	for (int n = 0; n < mesh.nodes.size(); n++)
 	{
-		Node* node = mesh.nodes[n];
-		Vert* vert = node->verts[0];
+		Node *node = mesh.nodes[n];
+		Vert *vert = node->verts[0];
 
 		node->v[0] = v(n * 3);
 		node->v[1] = v(n * 3 + 1);
@@ -338,17 +340,18 @@ void Cloth::step(Obstacle* obstacle, const Vector3d& gravity, double h, double t
 			vert->v[0] = v(mesh.nodes.size() * 3 + node->EoL_index * 2);
 			vert->v[1] = v(mesh.nodes.size() * 3 + node->EoL_index * 2 + 1);
 			vert->u[0] = vert->u[0] + h * vert->v[0];
-			vert->u[1] = vert->u[1] + h * vert->v[1];;
+			vert->u[1] = vert->u[1] + h * vert->v[1];
+			;
 		}
 	}
 
 	createClothBuffer();
 }
 
-bool Cloth::mosekSolve(const SparseMatrix<double>& MDK, const VectorXd& b,
-	const SparseMatrix<double>& Aeq, const VectorXd& beq,
-	const SparseMatrix<double>& Aineq, const VectorXd& bineq,
-	VectorXd& v)
+bool Cloth::mosekSolve(const SparseMatrix<double> &MDK, const VectorXd &b,
+					   const SparseMatrix<double> &Aeq, const VectorXd &beq,
+					   const SparseMatrix<double> &Aineq, const VectorXd &bineq,
+					   VectorXd &v)
 {
 	QuadProgMosek *program = new QuadProgMosek();
 	double inf = numeric_limits<double>::infinity();
@@ -382,17 +385,17 @@ void Cloth::createClothBuffer()
 {
 	delete buffer;
 	delete mesh_buffer;
-	buffer = (float*)malloc(sizeof(float)*mesh.faces.size() * 3 * 6);
-	mesh_buffer = (float*)malloc(sizeof(float)*mesh.faces.size() * 6 * 3);
-
+	buffer = (float *)malloc(sizeof(float) * mesh.faces.size() * 3 * 6);
+	mesh_buffer = (float *)malloc(sizeof(float) * mesh.faces.size() * 6 * 3);
+	std::cout << mesh.faces.size() << std::endl;
 	for (int i = 0; i < mesh.faces.size(); i++)
 	{
 		buffer[i * 18] = mesh.faces[i]->v[0]->node->x[0];
-		buffer[i * 18+1] = mesh.faces[i]->v[0]->node->x[1];
-		buffer[i * 18+2] = mesh.faces[i]->v[0]->node->x[2];
-		buffer[i * 18+3] = mesh.faces[i]->n[0];
-		buffer[i * 18+4] = mesh.faces[i]->n[1];
-		buffer[i * 18+5] = mesh.faces[i]->n[2];
+		buffer[i * 18 + 1] = mesh.faces[i]->v[0]->node->x[1];
+		buffer[i * 18 + 2] = mesh.faces[i]->v[0]->node->x[2];
+		buffer[i * 18 + 3] = mesh.faces[i]->n[0];
+		buffer[i * 18 + 4] = mesh.faces[i]->n[1];
+		buffer[i * 18 + 5] = mesh.faces[i]->n[2];
 
 		buffer[i * 18 + 6] = mesh.faces[i]->v[1]->node->x[0];
 		buffer[i * 18 + 7] = mesh.faces[i]->v[1]->node->x[1];
@@ -411,33 +414,31 @@ void Cloth::createClothBuffer()
 
 	for (int i = 0; i < mesh.faces.size(); i++)
 	{
-		mesh_buffer[i * 18]   =	 mesh.faces[i]->v[0]->u[0]*0.55 + 0.45;
-		mesh_buffer[i * 18 + 1] = -mesh.faces[i]->v[0]->u[1]*0.55 - 0.45;
+		mesh_buffer[i * 18] = mesh.faces[i]->v[0]->u[0] * 0.55 + 0.45;
+		mesh_buffer[i * 18 + 1] = -mesh.faces[i]->v[0]->u[1] * 0.55 - 0.45;
 		mesh_buffer[i * 18 + 2] = 0;
-		
-		mesh_buffer[i * 18 + 3] = mesh.faces[i]->v[1]->u[0]*0.55 + 0.45;
-		mesh_buffer[i * 18 + 4] = -mesh.faces[i]->v[1]->u[1]*0.55 - 0.45;
+
+		mesh_buffer[i * 18 + 3] = mesh.faces[i]->v[1]->u[0] * 0.55 + 0.45;
+		mesh_buffer[i * 18 + 4] = -mesh.faces[i]->v[1]->u[1] * 0.55 - 0.45;
 		mesh_buffer[i * 18 + 5] = 0;
 
-		mesh_buffer[i * 18 + 6] = mesh.faces[i]->v[0]->u[0]*0.55 + 0.45;
-		mesh_buffer[i * 18 + 7] = -mesh.faces[i]->v[0]->u[1]*0.55 - 0.45;
+		mesh_buffer[i * 18 + 6] = mesh.faces[i]->v[0]->u[0] * 0.55 + 0.45;
+		mesh_buffer[i * 18 + 7] = -mesh.faces[i]->v[0]->u[1] * 0.55 - 0.45;
 		mesh_buffer[i * 18 + 8] = 0;
-		
-		mesh_buffer[i * 18 + 9]  = mesh.faces[i]->v[2]->u[0]*0.55 + 0.45;
-		mesh_buffer[i * 18 + 10] = -mesh.faces[i]->v[2]->u[1]*0.55 - 0.45;
+
+		mesh_buffer[i * 18 + 9] = mesh.faces[i]->v[2]->u[0] * 0.55 + 0.45;
+		mesh_buffer[i * 18 + 10] = -mesh.faces[i]->v[2]->u[1] * 0.55 - 0.45;
 		mesh_buffer[i * 18 + 11] = 0;
 
-		mesh_buffer[i * 18 + 12] = mesh.faces[i]->v[1]->u[0]*0.55 + 0.45;
-		mesh_buffer[i * 18 + 13] = -mesh.faces[i]->v[1]->u[1]*0.55 - 0.45;
+		mesh_buffer[i * 18 + 12] = mesh.faces[i]->v[1]->u[0] * 0.55 + 0.45;
+		mesh_buffer[i * 18 + 13] = -mesh.faces[i]->v[1]->u[1] * 0.55 - 0.45;
 		mesh_buffer[i * 18 + 14] = 0;
-		
-		mesh_buffer[i * 18 + 15] = mesh.faces[i]->v[2]->u[0]*0.55 + 0.45;
-		mesh_buffer[i * 18 + 16] = -mesh.faces[i]->v[2]->u[1]*0.55 - 0.45;
+
+		mesh_buffer[i * 18 + 15] = mesh.faces[i]->v[2]->u[0] * 0.55 + 0.45;
+		mesh_buffer[i * 18 + 16] = -mesh.faces[i]->v[2]->u[1] * 0.55 - 0.45;
 		mesh_buffer[i * 18 + 17] = 0;
 	}
 
-
-	buffer_size = sizeof(float)*mesh.faces.size() * 6 * 3;
-	mesh_buffer_size = sizeof(float)*mesh.faces.size() * 3 * 6;
-
+	buffer_size = sizeof(float) * mesh.faces.size() * 6 * 3;
+	mesh_buffer_size = sizeof(float) * mesh.faces.size() * 3 * 6;
 }
